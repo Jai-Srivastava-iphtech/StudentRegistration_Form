@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 20px 42px;
+      background:
+        linear-gradient(155deg, #153240 0%, #1f4b5f 38%, #2f5d56 72%, #315b4a 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+      width: min(1280px, 100%);
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(6, 18, 28, 0.32) 1.2px, transparent 1.2px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 50%, rgba(94, 234, 212, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%, rgba(125, 211, 252, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 85%, rgba(45, 212, 191, 0.12) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-icons {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-icon {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      opacity: 0;
+      animation: floatIcon linear infinite;
+      filter: brightness(0) saturate(100%) invert(79%) sepia(17%) saturate(850%) hue-rotate(122deg) brightness(101%) contrast(95%);
+      mix-blend-mode: screen;
+    }
+
+    .bg-icon:nth-child(1) {
+      left: 4%;
+      top: 12%;
+      animation-duration: 14s;
+      animation-delay: 0s;
+    }
+
+    .bg-icon:nth-child(2) {
+      left: 88%;
+      top: 8%;
+      animation-duration: 17s;
+      animation-delay: -4s;
+    }
+
+    .bg-icon:nth-child(3) {
+      left: 76%;
+      top: 55%;
+      animation-duration: 16s;
+      animation-delay: -9s;
+    }
+
+    .bg-icon:nth-child(4) {
+      left: 10%;
+      top: 70%;
+      animation-duration: 19s;
+      animation-delay: -14s;
+    }
+
+    .bg-icon:nth-child(5) {
+      left: 50%;
+      top: 5%;
+      animation-duration: 15s;
+      animation-delay: -6s;
+    }
+
+    .bg-icon:nth-child(6) {
+      left: 92%;
+      top: 78%;
+      animation-duration: 18s;
+      animation-delay: -11s;
+    }
+
+    .bg-icon:nth-child(7) {
+      left: 32%;
+      top: 88%;
+      animation-duration: 13s;
+      animation-delay: -2s;
+    }
+
+    .bg-icon:nth-child(8) {
+      left: 65%;
+      top: 30%;
+      animation-duration: 20s;
+      animation-delay: -16s;
+    }
+
+    .bg-icon:nth-child(9) {
+      left: 22%;
+      top: 42%;
+      animation-duration: 16s;
+      animation-delay: -7s;
+    }
+
+    .bg-icon:nth-child(10) {
+      left: 80%;
+      top: 92%;
+      animation-duration: 18s;
+      animation-delay: -3s;
+    }
+
+    .bg-icon:nth-child(11) {
+      left: 45%;
+      top: 60%;
+      animation-duration: 12s;
+      animation-delay: -12s;
+    }
+
+    .bg-icon:nth-child(12) {
+      left: 58%;
+      top: 78%;
+      animation-duration: 16s;
+      animation-delay: -18s;
+    }
+
+    .bg-icon:nth-child(13) {
+      left: 6%;
+      top: 38%;
+      animation-duration: 15s;
+      animation-delay: -10s;
+    }
+
+    .bg-icon:nth-child(14) {
+      left: 70%;
+      top: 14%;
+      animation-duration: 13s;
+      animation-delay: -5s;
+    }
+
+    .bg-icon:nth-child(15) {
+      left: 38%;
+      top: 82%;
+      animation-duration: 18s;
+      animation-delay: -15s;
+    }
+
+    .bg-icon:nth-child(16) {
+      left: 90%;
+      top: 46%;
+      animation-duration: 14s;
+      animation-delay: -8s;
+    }
+
+    @keyframes floatIcon {
+      0% {
+        opacity: 0;
+        transform: translateY(0px) rotate(0deg) scale(1);
+      }
+
+      10% {
+        opacity: 0.22;
+      }
+
+      50% {
+        transform: translateY(-22px) rotate(8deg) scale(1.05);
+      }
+
+      90% {
+        opacity: 0.22;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(0px) rotate(0deg) scale(1);
+      }
+    }
+
+    .corner-ring {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(94, 234, 212, 0.1);
+    }
+
+    .corner-ring.tl {
+      top: -120px;
+      left: -120px;
+      width: 320px;
+      height: 320px;
+    }
+
+    .corner-ring.tl::after {
+      content: '';
+      position: absolute;
+      inset: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(94, 234, 212, 0.07);
+    }
+
+    .corner-ring.br {
+      bottom: -140px;
+      right: -140px;
+      width: 380px;
+      height: 380px;
+    }
+
+    .corner-ring.br::after {
+      content: '';
+      position: absolute;
+      inset: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(45, 212, 191, 0.06);
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 18px;
+      box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.08) inset,
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        0 1px 3px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .form-card {
+      position: sticky;
+      top: 28px;
+      max-height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-card .card-body {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .form-card .card-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .form-card .card-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .form-card .card-body::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 4px;
+    }
+
+    .card-top {
+      height: 4px;
+      background: linear-gradient(90deg, #14b8a6, #0ea5e9, #14b8a6);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .card-header {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .header-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #0f766e, #0ea5e9);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-icon .ui-icon {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1);
+    }
+
+    .card-header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .card-header p {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .records-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      gap: 10px;
+    }
+
+    .count-chip {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      font-size: 0.71rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .count-chip.visible {
+      display: inline-flex;
+    }
+
+    .card-body {
+      padding: 20px 28px 28px;
+    }
+
+    .section-label {
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 13px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .ui-icon {
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .section-label .ui-icon {
+      width: 13px;
+      height: 13px;
+      filter: brightness(0) saturate(100%) invert(53%) sepia(35%) saturate(1054%) hue-rotate(137deg) brightness(92%) contrast(91%);
+    }
+
+    .section-label:first-child {
+      margin-top: 0;
+    }
+
+    .divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 18px 0 15px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label,
+    .group-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    label .ui-icon,
+    .group-label .ui-icon {
+      width: 12px;
+      height: 12px;
+      opacity: 0.58;
+    }
+
+    .radio-item .ui-icon {
+      width: 13px;
+      height: 13px;
+      opacity: 0.72;
+    }
+
+    button[type="submit"] .ui-icon {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0) invert(1);
+    }
+
+    .success-msg .ui-icon {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0) saturate(100%) invert(38%) sepia(97%) saturate(536%) hue-rotate(90deg) brightness(93%) contrast(90%);
+    }
+
+    input:not([type="radio"]),
+    select,
+    textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 0.85rem;
+      color: #1e293b;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 11px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:not([type="radio"])::placeholder,
+    textarea::placeholder {
+      color: #c0ccd9;
+    }
+
+    input:not([type="radio"]):focus,
+    select:focus,
+    textarea:focus {
+      border-color: #0ea5e9;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+    }
+
+    .input-error {
+      border-color: #ef4444 !important;
+      background: #fff8f8 !important;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 4px solid transparent;
+      border-top-color: #94a3b8;
+      pointer-events: none;
+    }
+
+    select {
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    select:disabled {
+      cursor: not-allowed;
+      opacity: 0.72;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 2px;
+    }
+
+    .gender-radio {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .radio-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-width: 80px;
+      padding: 7px 11px;
+      border: 1px solid #d7e0ea;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+
+    .gender-radio:checked+.radio-item {
+      background: #ecfeff;
+      border-color: #22d3ee;
+      color: #0e7490;
+    }
+
+    .gender-radio:focus-visible+.radio-item {
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.14);
+      border-color: #14b8a6;
+    }
+
+    .error-msg {
+      font-size: 0.71rem;
+      color: #ef4444;
+      font-weight: 500;
+      min-height: 13px;
+    }
+
+    .helper-msg {
+      font-size: 0.7rem;
+      color: #64748b;
+      line-height: 1.35;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      background: #0f766e;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 18px;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button[type="submit"]:hover {
+      background: #0d9488;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.36);
+      transform: translateY(-1px);
+    }
+
+    button[type="submit"]:active {
+      background: #115e59;
+      transform: none;
+    }
+
+    .success-msg {
+      display: none;
+      margin-top: 10px;
+      padding: 9px 13px;
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .students-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+      font-size: 0.8rem;
+      color: #1f2937;
+    }
+
+    .students-table thead {
+      background: #f1f5f9;
+    }
+
+    .students-table th {
+      padding: 10px 13px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #64748b;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .students-table td {
+      padding: 9px 13px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .students-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .students-table tbody tr {
+      transition: background 0.1s;
+    }
+
+    .students-table tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    .name-cell {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .avatar-initials {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0f766e, #0891b2);
+      color: #fff;
+      font-size: 0.61rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .name-text {
+      font-weight: 600;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .pill-male {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .pill-female {
+      background: #fdf2f8;
+      color: #9d174d;
+      border: 1px solid #fbcfe8;
+    }
+
+    .pill-other {
+      background: #f5f3ff;
+      color: #5b21b6;
+      border: 1px solid #ddd6fe;
+    }
+
+    .pill-cs {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .pill-mech {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .pill-civil {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+    }
+
+    .pill-elec {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
+    .pill-gen {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    .cgpa-val {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.78rem;
+    }
+
+    .loc-city {
+      font-weight: 600;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+
+    .loc-state {
+      font-size: 0.68rem;
+      color: #94a3b8;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .row-action-btn {
+      font: inherit;
+      font-size: 0.71rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .row-action-btn.edit {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: #0f766e;
+    }
+
+    .row-action-btn.edit:hover {
+      background: #ccfbf1;
+      border-color: #14b8a6;
+    }
+
+    .row-action-btn.delete {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+
+    .row-action-btn.delete:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    .empty-state {
+      padding: 48px 20px;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .empty-icon {
+      width: 44px;
+      height: 44px;
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 960px) {
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .form-card {
+        position: relative;
+        top: 0;
+        max-height: none;
+      }
+
+      .form-card .card-body {
+        overflow: visible;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .card-header,
+      .card-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="corner-ring tl"></div>
+  <div class="corner-ring br"></div>
+
+  <div class="bg-icons" aria-hidden="true">
+    <img class="bg-icon" src="images/bg-icons/graduation-cap-thin-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/react-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/trophy-free-material-6-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/calculator-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/star-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/globe-alt-o-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/certificate-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/notepad-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/shield-check-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/open-book-book-svgrepo-com.svg" alt="" />
+    <img class="bg-icon" src="images/bg-icons/pencil-svgrepo-com.svg" alt="" />
+  </div>
+
+  <main class="page-shell">
+
+    <div class="card form-card">
+      <div class="card-top"></div>
+
+      <div class="card-header">
+        <div class="header-icon">
+          <img class="ui-icon" src="images/ui-icons/graduation-cap-thin-svgrepo-com.svg" alt="" />
+        </div>
+        <div>
+          <h1>Student Registration</h1>
+          <p>Please enter the student's details below.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form id="studentForm" novalidate>
+
+          <div class="section-label">
+            <img class="ui-icon" src="images/ui-icons/user-alt-1-svgrepo-com.svg" alt="" />
+            Personal Information
+          </div>
+          <div class="grid-2">
+
+            <div class="field full">
+              <label for="fullName"><img class="ui-icon" src="images/ui-icons/user-alt-1-svgrepo-com.svg" alt="" />Full
+                Name*</label>
+              <input type="text" id="fullName" name="fullName" placeholder="e.g. Jane Doe" autocomplete="name"
+                required />
+              <div class="error-msg" id="err-fullName"></div>
+            </div>
+
+            <div class="field">
+              <label for="dob"><img class="ui-icon" src="images/ui-icons/calendar-svgrepo-com.svg" alt="" />Date of
+                Birth*</label>
+              <input type="date" id="dob" name="dob" required />
+              <div class="error-msg" id="err-dob"></div>
+            </div>
+
+            <div class="field">
+              <label for="phone"><img class="ui-icon" src="images/ui-icons/phone-svgrepo-com.svg" alt="" />Phone
+                Number*</label>
+              <input type="tel" id="phone" name="phone" placeholder="10-digit number" maxlength="10" inputmode="numeric"
+                autocomplete="tel" required />
+              <div class="error-msg" id="err-phone"></div>
+            </div>
+
+            <div class="field full">
+              <label for="email"><img class="ui-icon" src="images/ui-icons/email-svgrepo-com.svg" alt="" />Email
+                Address*</label>
+              <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email"
+                required />
+              <div class="error-msg" id="err-email"></div>
+            </div>
+
+            <div class="field full">
+              <span class="group-label" id="genderLabel">
+                <img class="ui-icon" src="images/ui-icons/gender-male-svgrepo-com.svg" alt="" />Gender*
+              </span>
+              <div class="radio-row" role="radiogroup" aria-labelledby="genderLabel">
+                <input class="gender-radio" type="radio" id="genderMale" name="gender" value="Male" />
+                <label class="radio-item" for="genderMale"><img class="ui-icon"
+                    src="images/ui-icons/male-svgrepo-com.svg" alt="" />Male</label>
+                <input class="gender-radio" type="radio" id="genderFemale" name="gender" value="Female" />
+                <label class="radio-item" for="genderFemale"><img class="ui-icon"
+                    src="images/ui-icons/female-svgrepo-com.svg" alt="" />Female</label>
+                <input class="gender-radio" type="radio" id="genderOther" name="gender" value="Other" />
+                <label class="radio-item" for="genderOther"><img class="ui-icon"
+                    src="images/ui-icons/user-alt-1-svgrepo-com.svg" alt="" />Other</label>
+              </div>
+              <div class="error-msg" id="err-gender"></div>
+            </div>
+
+            <div class="field">
+              <label for="state"><img class="ui-icon" src="images/ui-icons/map-pin-svgrepo-com.svg" alt="" />State
+                (India)*</label>
+              <div class="select-wrap">
+                <select id="state" name="state" required>
+                  <option value="" disabled selected>Select state</option>
+                </select>
+              </div>
+              <div class="error-msg" id="err-state"></div>
+            </div>
+
+            <div class="field">
+              <label for="city"><img class="ui-icon" src="images/ui-icons/map-pin-svgrepo-com.svg"
+                  alt="" />City*</label>
+              <div class="select-wrap">
+                <select id="city" name="city" disabled required>
+                  <option value="" disabled selected>Select city</option>
+                </select>
+              </div>
+              <div class="error-msg" id="err-city"></div>
+            </div>
+
+            <div class="field full">
+              <label for="address"><img class="ui-icon" src="images/ui-icons/map-pin-svgrepo-com.svg"
+                  alt="" />Address*</label>
+              <textarea id="address" name="address" placeholder="Street, City, State, PIN" autocomplete="street-address"
+                required></textarea>
+              <div class="error-msg" id="err-address"></div>
+            </div>
+
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">
+            <img class="ui-icon" src="images/ui-icons/graduation-cap-thin-svgrepo-com.svg" alt="" />Academic Details
+          </div>
+
+          <div class="grid-2">
+
+            <div class="field">
+              <label for="rollNumber"><img class="ui-icon" src="images/ui-icons/clipboard-list-alt-svgrepo-com.svg"
+                  alt="" />Roll Number*</label>
+              <input type="text" id="rollNumber" name="rollNumber" placeholder="e.g. 1042" inputmode="numeric"
+                required />
+              <div class="error-msg" id="err-rollNumber"></div>
+            </div>
+
+            <div class="field">
+              <label for="cgpa"><img class="ui-icon" src="images/ui-icons/star-sharp-svgrepo-com.svg"
+                  alt="" />CGPA*</label>
+              <input type="number" id="cgpa" name="cgpa" step="0.1" min="0" max="10" placeholder="0.0 – 10.0"
+                required />
+              <div class="error-msg" id="err-cgpa"></div>
+            </div>
+
+            <div class="field">
+              <label for="course"><img class="ui-icon" src="images/ui-icons/graduation-cap-thin-svgrepo-com.svg"
+                  alt="" />Course / Branch*</label>
+              <div class="select-wrap">
+                <select id="course" name="course" required>
+                  <option value="" disabled selected>Select a course</option>
+                  <option>Computer Science</option>
+                  <option>Mechanical</option>
+                  <option>Civil</option>
+                  <option>Electronics</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="error-msg" id="err-course"></div>
+            </div>
+
+            <div class="field">
+              <label for="semester"><img class="ui-icon" src="images/ui-icons/calendar-svgrepo-com.svg" alt="" />Current
+                Semester*</label>
+              <div class="select-wrap">
+                <select id="semester" name="semester" required>
+                  <option value="" disabled selected>Select semester</option>
+                  <option value="1">1st Semester</option>
+                  <option value="2">2nd Semester</option>
+                  <option value="3">3rd Semester</option>
+                  <option value="4">4th Semester</option>
+                  <option value="5">5th Semester</option>
+                  <option value="6">6th Semester</option>
+                  <option value="7">7th Semester</option>
+                  <option value="8">8th Semester</option>
+                </select>
+              </div>
+              <div class="error-msg" id="err-semester"></div>
+            </div>
+
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">
+            <img class="ui-icon" src="images/bg-icons/shield-check-svgrepo-com.svg" alt="" />Account Security
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="password">Password*</label>
+              <input type="password" id="password" name="password" placeholder="Max 10 characters" maxlength="10"
+                required />
+              <div class="helper-msg">Letters, numbers &amp; 1 special character.</div>
+              <div class="error-msg" id="err-password"></div>
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm Password*</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password"
+                maxlength="10" required />
+              <div class="error-msg" id="err-confirmPassword"></div>
+            </div>
+          </div>
+
+          <button type="submit">
+            <img class="ui-icon" src="images/ui-icons/check-big-svgrepo-com.svg" alt="" />
+            <span id="submitBtnText">Submit Registration</span>
+          </button>
+          <div class="success-msg" id="successMsg">
+            <img class="ui-icon" src="images/ui-icons/check-big-svgrepo-com.svg" alt="" />
+            <span id="successMsgText">Data submitted successfully!</span>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="card records-card">
+      <div class="card-top"></div>
+      <div class="card-header">
+        <div class="header-icon">
+          <img class="ui-icon" src="images/ui-icons/clipboard-list-alt-svgrepo-com.svg" alt="" />
+        </div>
+        <div class="records-header-inner">
+          <div>
+            <h1>Registered Students</h1>
+            <p>Saved submissions are listed below.</p>
+          </div>
+          <div class="count-chip" id="countChip">0 students</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding-top:16px;">
+        <div class="table-wrap">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Roll No.</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Location</th>
+                <th>Course</th>
+                <th>Sem</th>
+                <th>CGPA</th>
+                <th>Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyStateMsg">
+            <div class="empty-icon">📋</div>
+            <strong style="color:#475569;font-size:0.83rem;">No registrations yet</strong>
+            <span>Submit the form to see student records here.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const form = document.getElementById('studentForm');
+    const submitButtonText = document.getElementById('submitBtnText');
+    const successMessage = document.getElementById('successMsg');
+    const successMessageText = document.getElementById('successMsgText');
+    const tableBody = document.getElementById('studentsTableBody');
+    const emptyMessage = document.getElementById('emptyStateMsg');
+    const countChip = document.getElementById('countChip');
+
+    const fullNameInput = document.getElementById('fullName');
+    const dobInput = document.getElementById('dob');
+    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
+    const stateInput = document.getElementById('state');
+    const cityInput = document.getElementById('city');
+    const addressInput = document.getElementById('address');
+    const rollNumberInput = document.getElementById('rollNumber');
+    const cgpaInput = document.getElementById('cgpa');
+    const courseInput = document.getElementById('course');
+    const semesterInput = document.getElementById('semester');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const genderRadios = document.querySelectorAll('input[name="gender"]');
+    const genderError = document.getElementById('err-gender');
+
+    const studentRecords = [];
+    let editingRecordIndex = -1;
+    let successMessageTimerId = null;
+
+    const passwordRule = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9])\S{1,10}$/;
+    const fieldIds = [
+      'fullName',
+      'rollNumber',
+      'email',
+      'phone',
+      'dob',
+      'state',
+      'city',
+      'course',
+      'semester',
+      'cgpa',
+      'address',
+      'password',
+      'confirmPassword'
+    ];
+
+    const indiaStateCityMap = {
+      'Andaman and Nicobar Islands': ['Port Blair', 'Havelock', 'Diglipur'],
+      'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Tirupati'],
+      'Arunachal Pradesh': ['Itanagar', 'Tawang', 'Naharlagun'],
+      Assam: ['Guwahati', 'Dibrugarh', 'Silchar'],
+      Bihar: ['Patna', 'Gaya', 'Muzaffarpur'],
+      Chandigarh: ['Chandigarh'],
+      Chhattisgarh: ['Raipur', 'Bilaspur', 'Durg'],
+      'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa'],
+      Delhi: ['New Delhi', 'Dwarka', 'Rohini'],
+      Goa: ['Panaji', 'Margao', 'Vasco da Gama'],
+      Gujarat: ['Ahmedabad', 'Surat', 'Vadodara'],
+      Haryana: ['Gurugram', 'Faridabad', 'Panipat'],
+      'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Solan'],
+      'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Anantnag'],
+      Jharkhand: ['Ranchi', 'Jamshedpur', 'Dhanbad'],
+      Karnataka: ['Bengaluru', 'Mysuru', 'Mangaluru'],
+      Kerala: ['Thiruvananthapuram', 'Kochi', 'Kozhikode'],
+      Ladakh: ['Leh', 'Kargil', 'Nubra'],
+      Lakshadweep: ['Kavaratti', 'Agatti', 'Minicoy'],
+      'Madhya Pradesh': ['Bhopal', 'Indore', 'Gwalior'],
+      Maharashtra: ['Mumbai', 'Pune', 'Nagpur'],
+      Manipur: ['Imphal', 'Thoubal', 'Bishnupur'],
+      Meghalaya: ['Shillong', 'Tura', 'Jowai'],
+      Mizoram: ['Aizawl', 'Lunglei', 'Champhai'],
+      Nagaland: ['Kohima', 'Dimapur', 'Mokokchung'],
+      Odisha: ['Bhubaneswar', 'Cuttack', 'Rourkela'],
+      Puducherry: ['Puducherry', 'Karaikal', 'Mahe'],
+      Punjab: ['Ludhiana', 'Amritsar', 'Jalandhar'],
+      Rajasthan: ['Jaipur', 'Udaipur', 'Jodhpur'],
+      Sikkim: ['Gangtok', 'Namchi', 'Gyalshing'],
+      'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai'],
+      Telangana: ['Hyderabad', 'Warangal', 'Nizamabad'],
+      Tripura: ['Agartala', 'Udaipur', 'Dharmanagar'],
+      'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi'],
+      Uttarakhand: ['Dehradun', 'Haridwar', 'Nainital'],
+      'West Bengal': ['Kolkata', 'Siliguri', 'Durgapur']
+    };
+
+    function showError(fieldId, message) {
+      const errorElement = document.getElementById('err-' + fieldId);
+      const inputElement = document.getElementById(fieldId);
+
+      if (errorElement) {
+        errorElement.textContent = message;
+      }
+
+      if (inputElement) {
+        inputElement.classList.add('input-error');
+      }
+    }
+
+    function clearError(fieldId) {
+      const errorElement = document.getElementById('err-' + fieldId);
+      const inputElement = document.getElementById(fieldId);
+
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+
+      if (inputElement) {
+        inputElement.classList.remove('input-error');
+      }
+    }
+
+    function clearAllErrors() {
+      fieldIds.forEach(function (fieldId) {
+        clearError(fieldId);
+      });
+      genderError.textContent = '';
+    }
+
+    function getSelectedGender() {
+      for (const radio of genderRadios) {
+        if (radio.checked) {
+          return radio.value;
+        }
+      }
+      return '';
+    }
+
+    function setSelectedGender(genderValue) {
+      genderRadios.forEach(function (radio) {
+        radio.checked = radio.value === genderValue;
+      });
+    }
+
+    function setOptions(selectElement, placeholderText, values) {
+      selectElement.innerHTML = '';
+
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = '';
+      placeholderOption.textContent = placeholderText;
+      placeholderOption.disabled = true;
+      placeholderOption.selected = true;
+      selectElement.appendChild(placeholderOption);
+
+      values.forEach(function (value) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        selectElement.appendChild(option);
+      });
+    }
+
+    function loadStates() {
+      const states = Object.keys(indiaStateCityMap).sort(function (a, b) {
+        return a.localeCompare(b);
+      });
+
+      setOptions(stateInput, 'Select state', states);
+      setOptions(cityInput, 'Select city', []);
+      cityInput.disabled = true;
+    }
+
+    function loadCitiesByState(stateName) {
+      const cities = indiaStateCityMap[stateName] || [];
+      setOptions(cityInput, 'Select city', cities);
+      cityInput.disabled = cities.length === 0;
+    }
+
+    function getInitials(name) {
+      return name
+        .split(' ')
+        .filter(Boolean)
+        .map(function (word) {
+          return word[0];
+        })
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+    }
+
+    function getCoursePillClass(courseName) {
+      const classMap = {
+        'Computer Science': 'cs',
+        Mechanical: 'mech',
+        Civil: 'civil',
+        Electronics: 'elec'
+      };
+      return 'pill pill-' + (classMap[courseName] || 'gen');
+    }
+
+    function updateCountChip() {
+      const totalRecords = studentRecords.length;
+      countChip.textContent = totalRecords + ' student' + (totalRecords !== 1 ? 's' : '');
+      countChip.classList.toggle('visible', totalRecords > 0);
+    }
+
+    function hideSuccessMessage() {
+      if (successMessageTimerId) {
+        clearTimeout(successMessageTimerId);
+        successMessageTimerId = null;
+      }
+      successMessage.style.display = 'none';
+    }
+
+    function showSuccessMessage(message) {
+      hideSuccessMessage();
+      successMessageText.textContent = message;
+      successMessage.style.display = 'flex';
+      successMessageTimerId = setTimeout(function () {
+        successMessage.style.display = 'none';
+        successMessageTimerId = null;
+      }, 5000);
+    }
+
+    function resetEditingState() {
+      editingRecordIndex = -1;
+      submitButtonText.textContent = 'Submit Registration';
+    }
+
+    function createCell(textValue) {
+      const cell = document.createElement('td');
+      cell.textContent = textValue;
+      return cell;
+    }
+
+    function createNameCell(student) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'name-cell';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar-initials';
+      avatar.textContent = getInitials(student.fullName);
+
+      const nameText = document.createElement('span');
+      nameText.className = 'name-text';
+      nameText.textContent = student.fullName;
+
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(nameText);
+
+      const cell = document.createElement('td');
+      cell.appendChild(wrapper);
+      return cell;
+    }
+
+    function createGenderCell(gender) {
+      const cell = document.createElement('td');
+      const pill = document.createElement('span');
+      pill.className = 'pill pill-' + gender.toLowerCase();
+      pill.textContent = gender;
+      cell.appendChild(pill);
+      return cell;
+    }
+
+    function createLocationCell(city, state) {
+      const cell = document.createElement('td');
+
+      const cityLine = document.createElement('div');
+      cityLine.className = 'loc-city';
+      cityLine.textContent = city;
+
+      const stateLine = document.createElement('div');
+      stateLine.className = 'loc-state';
+      stateLine.textContent = state;
+
+      cell.appendChild(cityLine);
+      cell.appendChild(stateLine);
+
+      return cell;
+    }
+
+    function createCourseCell(course) {
+      const cell = document.createElement('td');
+      const pill = document.createElement('span');
+      pill.className = getCoursePillClass(course);
+      pill.textContent = course;
+      cell.appendChild(pill);
+      return cell;
+    }
+
+    function createActionCell(index) {
+      const cell = document.createElement('td');
+      const actions = document.createElement('div');
+      actions.className = 'table-actions';
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.className = 'row-action-btn edit';
+      editButton.dataset.action = 'edit';
+      editButton.dataset.index = String(index);
+      editButton.textContent = 'Edit';
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'row-action-btn delete';
+      deleteButton.dataset.action = 'delete';
+      deleteButton.dataset.index = String(index);
+      deleteButton.textContent = 'Delete';
+
+      actions.appendChild(editButton);
+      actions.appendChild(deleteButton);
+      cell.appendChild(actions);
+
+      return cell;
+    }
+
+    function renderStudentTable() {
+      tableBody.innerHTML = '';
+      updateCountChip();
+
+      if (studentRecords.length === 0) {
+        emptyMessage.style.display = 'flex';
+        return;
+      }
+
+      emptyMessage.style.display = 'none';
+
+      studentRecords.forEach(function (student, index) {
+        const row = document.createElement('tr');
+
+        const serialCell = createCell(String(index + 1));
+        serialCell.style.color = '#94a3b8';
+        serialCell.style.fontWeight = '600';
+        row.appendChild(serialCell);
+
+        row.appendChild(createNameCell(student));
+
+        const rollCell = createCell(String(student.rollNumber));
+        rollCell.style.fontFamily = 'monospace';
+        rollCell.style.fontWeight = '700';
+        row.appendChild(rollCell);
+
+        const emailCell = createCell(student.email);
+        emailCell.style.color = '#475569';
+        row.appendChild(emailCell);
+
+        const phoneCell = createCell(student.phone);
+        phoneCell.style.color = '#475569';
+        row.appendChild(phoneCell);
+
+        const dobCell = createCell(student.dob);
+        dobCell.style.color = '#64748b';
+        row.appendChild(dobCell);
+
+        row.appendChild(createGenderCell(student.gender));
+        row.appendChild(createLocationCell(student.city, student.state));
+        row.appendChild(createCourseCell(student.course));
+
+        const semesterCell = createCell('Sem ' + student.semester);
+        semesterCell.style.color = '#64748b';
+        row.appendChild(semesterCell);
+
+        const cgpaCell = createCell(String(student.cgpa));
+        cgpaCell.className = 'cgpa-val';
+        row.appendChild(cgpaCell);
+
+        const addressCell = createCell(student.address);
+        addressCell.style.maxWidth = '160px';
+        addressCell.style.whiteSpace = 'normal';
+        addressCell.style.color = '#64748b';
+        row.appendChild(addressCell);
+
+        row.appendChild(createActionCell(index));
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    function validateAndBuildStudent() {
+      clearAllErrors();
+
+      const fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
+      const rollNumberText = rollNumberInput.value.trim();
+      const email = emailInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const dob = dobInput.value;
+      const state = stateInput.value.trim();
+      const city = cityInput.value.trim();
+      const course = courseInput.value.trim();
+      const semesterText = semesterInput.value.trim();
+      const cgpaText = cgpaInput.value.trim();
+      const address = addressInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      const gender = getSelectedGender();
+
+      let isValid = true;
+
+      if (!fullName) {
+        showError('fullName', 'Full name is required.');
+        isValid = false;
+      }
+
+      if (!rollNumberText || !/^\d+$/.test(rollNumberText) || Number(rollNumberText) <= 0) {
+        showError('rollNumber', 'Enter a valid roll number.');
+        isValid = false;
+      }
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('email', 'Enter a valid email address.');
+        isValid = false;
+      }
+
+      if (!phone || !/^\d{10}$/.test(phone)) {
+        showError('phone', 'Enter exactly 10 digits.');
+        isValid = false;
+      }
+
+      if (!dob) {
+        showError('dob', 'Date of birth is required.');
+        isValid = false;
+      } else {
+        const selectedDate = new Date(dob + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate > today) {
+          showError('dob', 'Cannot be in the future.');
+          isValid = false;
+        }
+      }
+
+      if (!gender) {
+        genderError.textContent = 'Please select a gender.';
+        isValid = false;
+      }
+
+      if (!state || !indiaStateCityMap[state]) {
+        showError('state', 'Please select a valid state.');
+        isValid = false;
+      }
+
+      if (!city || !state || !indiaStateCityMap[state] || !indiaStateCityMap[state].includes(city)) {
+        showError('city', 'Please select a city.');
+        isValid = false;
+      }
+
+      if (!course) {
+        showError('course', 'Please select a course.');
+        isValid = false;
+      }
+
+      if (!semesterText) {
+        showError('semester', 'Please select a semester.');
+        isValid = false;
+      }
+
+      const cgpa = parseFloat(cgpaText);
+      if (!cgpaText || Number.isNaN(cgpa) || cgpa < 0 || cgpa > 10) {
+        showError('cgpa', 'Enter a CGPA between 0 and 10.');
+        isValid = false;
+      }
+
+      if (!address) {
+        showError('address', 'Address is required.');
+        isValid = false;
+      }
+
+      if (!password || !passwordRule.test(password)) {
+        showError('password', 'Max 10 chars, letters + numbers + 1 special.');
+        isValid = false;
+      }
+
+      if (!confirmPassword) {
+        showError('confirmPassword', 'Please confirm your password.');
+        isValid = false;
+      } else if (confirmPassword !== password) {
+        showError('confirmPassword', 'Passwords do not match.');
+        isValid = false;
+      }
+
+      if (!isValid) {
+        return null;
+      }
+
+      return {
+        fullName: fullName,
+        rollNumber: Number(rollNumberText),
+        email: email,
+        dob: dob,
+        gender: gender,
+        country: 'India',
+        state: state,
+        city: city,
+        course: course,
+        semester: Number(semesterText),
+        cgpa: cgpa,
+        phone: phone,
+        address: address,
+        password: password
+      };
+    }
+
+    form.addEventListener('input', function (event) {
+      hideSuccessMessage();
+
+      const target = event.target;
+      if (!target || !target.id) {
+        return;
+      }
+
+      if (target.id === 'phone' || target.id === 'rollNumber') {
+        target.value = target.value.replace(/\D/g, '');
+      }
+
+      if (target.id === 'password' || target.id === 'confirmPassword') {
+        target.value = target.value.slice(0, 10);
+      }
+
+      clearError(target.id);
+    });
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      hideSuccessMessage();
+
+      const student = validateAndBuildStudent();
+      if (!student) {
+        return;
+      }
+
+      const isEditing = editingRecordIndex !== -1;
+      if (isEditing) {
+        studentRecords[editingRecordIndex] = student;
+      } else {
+        studentRecords.push(student);
+      }
+
+      renderStudentTable();
+      showSuccessMessage(
+        isEditing ? 'Student record updated successfully.' : 'Data submitted successfully!'
+      );
+
+      resetEditingState();
+      form.reset();
+      loadStates();
+    });
+
+    tableBody.addEventListener('click', function (event) {
+      const button = event.target.closest('button[data-action]');
+      if (!button) {
+        return;
+      }
+
+      const recordIndex = Number(button.dataset.index);
+      if (Number.isNaN(recordIndex) || !studentRecords[recordIndex]) {
+        return;
+      }
+
+      hideSuccessMessage();
+
+      if (button.dataset.action === 'edit') {
+        const student = studentRecords[recordIndex];
+
+        editingRecordIndex = recordIndex;
+        submitButtonText.textContent = 'Update Registration';
+        clearAllErrors();
+
+        fullNameInput.value = student.fullName;
+        dobInput.value = student.dob;
+        phoneInput.value = student.phone;
+        emailInput.value = student.email;
+        setSelectedGender(student.gender);
+        stateInput.value = student.state;
+        loadCitiesByState(student.state);
+        cityInput.value = student.city;
+        addressInput.value = student.address;
+        rollNumberInput.value = String(student.rollNumber);
+        cgpaInput.value = String(student.cgpa);
+        courseInput.value = student.course;
+        semesterInput.value = String(student.semester);
+        passwordInput.value = student.password;
+        confirmPasswordInput.value = student.password;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      if (button.dataset.action === 'delete') {
+        if (!confirm('Delete this student record?')) {
+          return;
+        }
+
+        studentRecords.splice(recordIndex, 1);
+
+        if (editingRecordIndex === recordIndex) {
+          form.reset();
+          loadStates();
+          clearAllErrors();
+          resetEditingState();
+        } else if (editingRecordIndex > recordIndex) {
+          editingRecordIndex -= 1;
+        }
+
+        renderStudentTable();
+      }
+    });
+
+    genderRadios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        genderError.textContent = '';
+        hideSuccessMessage();
+      });
+    });
+
+    stateInput.addEventListener('change', function () {
+      clearError('state');
+      clearError('city');
+      hideSuccessMessage();
+      loadCitiesByState(stateInput.value);
+    });
+
+    cityInput.addEventListener('change', function () {
+      clearError('city');
+      hideSuccessMessage();
+    });
+
+    loadStates();
+    renderStudentTable();
+  </script>
+</body>
+
+</html>
