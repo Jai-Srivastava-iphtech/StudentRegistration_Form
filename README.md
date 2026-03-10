@@ -75,6 +75,25 @@ This project demonstrates practical frontend skills such as **form validation**,
 
 ---
 
+## Project Structure
+
+```text
+StudentRegistration_Form/
+├── index.html
+├── README.md
+├── .gitignore
+└── assets/
+    ├── css/
+    │   └── styles.css
+    ├── js/
+    │   └── app.js
+    └── images/
+        ├── bg-icons/
+        └── ui-icons/
+```
+
+---
+
 ## How to Run
 
 1. Clone or download this repository.
