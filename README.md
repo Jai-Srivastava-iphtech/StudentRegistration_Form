@@ -85,6 +85,8 @@ StudentRegistration_Form/
 └── assets/
     ├── css/
     │   └── styles.css
+    ├── data/
+    │   └── Indian Cities Geo Data.csv
     ├── js/
     │   └── app.js
     └── images/
@@ -97,8 +99,19 @@ StudentRegistration_Form/
 ## How to Run
 
 1. Clone or download this repository.
-2. Open `index.html` in your browser.
-3. Fill the form and submit to see records in the table.
+2. Keep the dataset file at `assets/data/Indian Cities Geo Data.csv`.
+3. Open `index.html` using a simple local server (for example, VS Code Live Server).
+4. Fill the form and submit to see records in the table.
+
+---
+
+## Location Dataset Notes
+
+- The app reads location data directly from `assets/data/Indian Cities Geo Data.csv`.
+- The state and city columns are detected automatically from common header names.
+- States and cities are deduplicated and sorted alphabetically in JavaScript.
+- If the CSV file is missing or empty, state/city fields stay disabled.
+- If you open the file directly with `file://`, some browsers block CSV loading; use a local server.
 
 ---
 

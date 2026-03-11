@@ -43,44 +43,29 @@ const fieldIds = [
   'confirmPassword'
 ];
 
-const indiaStateCityMap = {
-  'Andaman and Nicobar Islands': ['Port Blair', 'Havelock', 'Diglipur'],
-  'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Tirupati'],
-  'Arunachal Pradesh': ['Itanagar', 'Tawang', 'Naharlagun'],
-  Assam: ['Guwahati', 'Dibrugarh', 'Silchar'],
-  Bihar: ['Patna', 'Gaya', 'Muzaffarpur'],
-  Chandigarh: ['Chandigarh'],
-  Chhattisgarh: ['Raipur', 'Bilaspur', 'Durg'],
-  'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa'],
-  Delhi: ['New Delhi', 'Dwarka', 'Rohini'],
-  Goa: ['Panaji', 'Margao', 'Vasco da Gama'],
-  Gujarat: ['Ahmedabad', 'Surat', 'Vadodara'],
-  Haryana: ['Gurugram', 'Faridabad', 'Panipat'],
-  'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Solan'],
-  'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Anantnag'],
-  Jharkhand: ['Ranchi', 'Jamshedpur', 'Dhanbad'],
-  Karnataka: ['Bengaluru', 'Mysuru', 'Mangaluru'],
-  Kerala: ['Thiruvananthapuram', 'Kochi', 'Kozhikode'],
-  Ladakh: ['Leh', 'Kargil', 'Nubra'],
-  Lakshadweep: ['Kavaratti', 'Agatti', 'Minicoy'],
-  'Madhya Pradesh': ['Bhopal', 'Indore', 'Gwalior'],
-  Maharashtra: ['Mumbai', 'Pune', 'Nagpur'],
-  Manipur: ['Imphal', 'Thoubal', 'Bishnupur'],
-  Meghalaya: ['Shillong', 'Tura', 'Jowai'],
-  Mizoram: ['Aizawl', 'Lunglei', 'Champhai'],
-  Nagaland: ['Kohima', 'Dimapur', 'Mokokchung'],
-  Odisha: ['Bhubaneswar', 'Cuttack', 'Rourkela'],
-  Puducherry: ['Puducherry', 'Karaikal', 'Mahe'],
-  Punjab: ['Ludhiana', 'Amritsar', 'Jalandhar'],
-  Rajasthan: ['Jaipur', 'Udaipur', 'Jodhpur'],
-  Sikkim: ['Gangtok', 'Namchi', 'Gyalshing'],
-  'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai'],
-  Telangana: ['Hyderabad', 'Warangal', 'Nizamabad'],
-  Tripura: ['Agartala', 'Udaipur', 'Dharmanagar'],
-  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi'],
-  Uttarakhand: ['Dehradun', 'Haridwar', 'Nainital'],
-  'West Bengal': ['Kolkata', 'Siliguri', 'Durgapur']
-};
+const LOCATION_DATA_URL = 'assets/data/Indian Cities Geo Data.csv';
+const STATE_COLUMN_ALIASES = [
+  'state',
+  'statename',
+  'stateut',
+  'stateunionterritory',
+  'stateorunionterritory',
+  'ut',
+  'utname',
+  'province',
+  'adminname'
+];
+const CITY_COLUMN_ALIASES = [
+  'city',
+  'location',
+  'cityname',
+  'citytown',
+  'town',
+  'district',
+  'districtname',
+  'name'
+];
+let indiaStateCityMap = {};
 
 function showError(fieldId, message) {
   const errorElement = document.getElementById('err-' + fieldId);
@@ -148,12 +133,186 @@ function setOptions(selectElement, placeholderText, values) {
   });
 }
 
+function normalizeHeader(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+function normalizeCityName(rawCityName) {
+  const cleanedCityName = String(rawCityName || '')
+    .replace(/\s*Latitude and Longitude\s*$/i, '')
+    .trim();
+
+  if (!cleanedCityName) {
+    return '';
+  }
+
+  const primaryCityName = cleanedCityName.includes(',')
+    ? cleanedCityName.split(',')[0].trim()
+    : cleanedCityName;
+
+  return primaryCityName.replace(/,+$/, '').trim();
+}
+
+function parseCsvRow(rowText) {
+  const values = [];
+  let currentValue = '';
+  let inQuotes = false;
+
+  for (let index = 0; index < rowText.length; index += 1) {
+    const char = rowText[index];
+
+    if (char === '"') {
+      const nextChar = rowText[index + 1];
+      if (inQuotes && nextChar === '"') {
+        currentValue += '"';
+        index += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === ',' && !inQuotes) {
+      values.push(currentValue.trim());
+      currentValue = '';
+      continue;
+    }
+
+    currentValue += char;
+  }
+
+  values.push(currentValue.trim());
+  return values;
+}
+
+function getColumnIndex(headers, aliases) {
+  const normalizedHeaders = headers.map(function (header) {
+    return normalizeHeader(header);
+  });
+
+  for (const alias of aliases) {
+    const aliasIndex = normalizedHeaders.indexOf(alias);
+    if (aliasIndex !== -1) {
+      return aliasIndex;
+    }
+  }
+
+  return -1;
+}
+
+function normalizeLocationMap(rawLocationMap) {
+  const normalizedMap = {};
+
+  if (!rawLocationMap || typeof rawLocationMap !== 'object') {
+    return normalizedMap;
+  }
+
+  Object.entries(rawLocationMap).forEach(function (entry) {
+    const stateName = String(entry[0] || '').trim();
+    const cityList = Array.isArray(entry[1]) ? entry[1] : [];
+
+    if (!stateName) {
+      return;
+    }
+
+    const uniqueSortedCities = Array.from(
+      new Set(
+        cityList
+          .map(function (city) {
+            return String(city || '').trim();
+          })
+          .filter(Boolean)
+      )
+    ).sort(function (a, b) {
+      return a.localeCompare(b);
+    });
+
+    normalizedMap[stateName] = uniqueSortedCities;
+  });
+
+  return Object.fromEntries(
+    Object.entries(normalizedMap).sort(function (a, b) {
+      return a[0].localeCompare(b[0]);
+    })
+  );
+}
+
+function parseLocationCsv(csvText) {
+  const lines = csvText
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(Boolean);
+
+  if (lines.length < 2) {
+    return {};
+  }
+
+  const headers = parseCsvRow(lines[0]);
+  const stateIndex = getColumnIndex(headers, STATE_COLUMN_ALIASES);
+  const cityIndex = getColumnIndex(headers, CITY_COLUMN_ALIASES);
+
+  if (stateIndex === -1 || cityIndex === -1) {
+    throw new Error('CSV must contain state and city columns.');
+  }
+
+  const stateCityMap = {};
+
+  for (let lineIndex = 1; lineIndex < lines.length; lineIndex += 1) {
+    const rowValues = parseCsvRow(lines[lineIndex]);
+    const stateName = String(rowValues[stateIndex] || '').trim();
+    const cityName = normalizeCityName(rowValues[cityIndex]);
+
+    if (!stateName || !cityName) {
+      continue;
+    }
+
+    if (!stateCityMap[stateName]) {
+      stateCityMap[stateName] = [];
+    }
+
+    stateCityMap[stateName].push(cityName);
+  }
+
+  return normalizeLocationMap(stateCityMap);
+}
+
+async function loadLocationData() {
+  try {
+    const response = await fetch(LOCATION_DATA_URL, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error('Failed to read location CSV file.');
+    }
+
+    const csvText = await response.text();
+    indiaStateCityMap = parseLocationCsv(csvText);
+
+    if (Object.keys(indiaStateCityMap).length === 0) {
+      throw new Error('Location CSV file is empty.');
+    }
+
+    loadStates();
+  } catch (error) {
+    console.error('Failed to load location data from CSV:', LOCATION_DATA_URL, error);
+    indiaStateCityMap = {};
+    stateInput.disabled = true;
+    cityInput.disabled = true;
+    setOptions(stateInput, 'Location data unavailable (run via local server)', []);
+    setOptions(cityInput, 'Location data unavailable', []);
+  }
+}
+
 function loadStates() {
   const states = Object.keys(indiaStateCityMap).sort(function (a, b) {
     return a.localeCompare(b);
   });
 
   setOptions(stateInput, 'Select state', states);
+  stateInput.disabled = states.length === 0;
   setOptions(cityInput, 'Select city', []);
   cityInput.disabled = true;
 }
@@ -423,6 +582,11 @@ function validateAndBuildStudent() {
     isValid = false;
   }
 
+  if (Object.keys(indiaStateCityMap).length === 0) {
+    showError('state', 'Location dataset is not loaded.');
+    isValid = false;
+  }
+
   if (!state || !indiaStateCityMap[state]) {
     showError('state', 'Please select a valid state.');
     isValid = false;
@@ -602,6 +766,9 @@ genderRadios.forEach(function (radio) {
 });
 
 stateInput.addEventListener('change', function () {
+  if (stateInput.disabled) {
+    return;
+  }
   clearError('state');
   clearError('city');
   hideSuccessMessage();
@@ -609,9 +776,16 @@ stateInput.addEventListener('change', function () {
 });
 
 cityInput.addEventListener('change', function () {
+  if (cityInput.disabled) {
+    return;
+  }
   clearError('city');
   hideSuccessMessage();
 });
 
-loadStates();
-renderStudentTable();
+async function initApp() {
+  await loadLocationData();
+  renderStudentTable();
+}
+
+initApp();
