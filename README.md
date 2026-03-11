@@ -151,4 +151,4 @@ Thanks to the frontend developer community for inspiration around accessible for
 
 ## Demo Video
 
-[Watch Demo on ScreenPal](https://go.screenpal.com/watch/cOe66HnZw14)
+[Watch Demo on ScreenPal](https://go.screenpal.com/watch/cOeXXlnZaqf)
