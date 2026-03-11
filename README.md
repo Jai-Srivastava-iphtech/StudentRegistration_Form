@@ -91,7 +91,10 @@ StudentRegistration_Form/
     │   └── app.js
     └── images/
         ├── bg-icons/
-        └── ui-icons/
+        ├── ui-icons/
+        └── screenshots/
+            ├── form-ui.jpg
+            └── records-ui.png
 ```
 
 ---
