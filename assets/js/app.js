@@ -66,31 +66,34 @@ const CITY_COLUMN_ALIASES = [
   'name'
 ];
 let indiaStateCityMap = {};
+const TABLE_CELL_STYLES = {
+  serial: { color: '#94a3b8', fontWeight: '600' },
+  rollNumber: { fontFamily: 'monospace', fontWeight: '700' },
+  muted: { color: '#475569' },
+  subtle: { color: '#64748b' },
+  address: { maxWidth: '160px', whiteSpace: 'normal', color: '#64748b' }
+};
 
-function showError(fieldId, message) {
+function setFieldErrorState(fieldId, message) {
   const errorElement = document.getElementById('err-' + fieldId);
   const inputElement = document.getElementById(fieldId);
+  const hasError = Boolean(message);
 
   if (errorElement) {
     errorElement.textContent = message;
   }
 
   if (inputElement) {
-    inputElement.classList.add('input-error');
+    inputElement.classList.toggle('input-error', hasError);
   }
 }
 
+function showError(fieldId, message) {
+  setFieldErrorState(fieldId, message);
+}
+
 function clearError(fieldId) {
-  const errorElement = document.getElementById('err-' + fieldId);
-  const inputElement = document.getElementById(fieldId);
-
-  if (errorElement) {
-    errorElement.textContent = '';
-  }
-
-  if (inputElement) {
-    inputElement.classList.remove('input-error');
-  }
+  setFieldErrorState(fieldId, '');
 }
 
 function clearAllErrors() {
@@ -374,9 +377,28 @@ function resetEditingState() {
   submitButtonText.textContent = 'Submit Registration';
 }
 
+function applyInlineStyles(element, styles) {
+  if (!styles) {
+    return;
+  }
+
+  Object.keys(styles).forEach(function (styleName) {
+    element.style[styleName] = styles[styleName];
+  });
+}
+
 function createCell(textValue) {
   const cell = document.createElement('td');
   cell.textContent = textValue;
+  return cell;
+}
+
+function createStyledCell(textValue, styles, className) {
+  const cell = createCell(textValue);
+  applyInlineStyles(cell, styles);
+  if (className) {
+    cell.className = className;
+  }
   return cell;
 }
 
@@ -435,30 +457,45 @@ function createCourseCell(course) {
   return cell;
 }
 
+function createActionButton(action, index, label) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'row-action-btn ' + action;
+  button.dataset.action = action;
+  button.dataset.index = String(index);
+  button.textContent = label;
+  return button;
+}
+
 function createActionCell(index) {
   const cell = document.createElement('td');
   const actions = document.createElement('div');
   actions.className = 'table-actions';
 
-  const editButton = document.createElement('button');
-  editButton.type = 'button';
-  editButton.className = 'row-action-btn edit';
-  editButton.dataset.action = 'edit';
-  editButton.dataset.index = String(index);
-  editButton.textContent = 'Edit';
-
-  const deleteButton = document.createElement('button');
-  deleteButton.type = 'button';
-  deleteButton.className = 'row-action-btn delete';
-  deleteButton.dataset.action = 'delete';
-  deleteButton.dataset.index = String(index);
-  deleteButton.textContent = 'Delete';
-
-  actions.appendChild(editButton);
-  actions.appendChild(deleteButton);
+  actions.appendChild(createActionButton('edit', index, 'Edit'));
+  actions.appendChild(createActionButton('delete', index, 'Delete'));
   cell.appendChild(actions);
 
   return cell;
+}
+
+function populateFormForEditing(student) {
+  fullNameInput.value = student.fullName;
+  dobInput.value = student.dob;
+  phoneInput.value = student.phone;
+  emailInput.value = student.email;
+  addressInput.value = student.address;
+  rollNumberInput.value = String(student.rollNumber);
+  cgpaInput.value = String(student.cgpa);
+  courseInput.value = student.course;
+  semesterInput.value = String(student.semester);
+  passwordInput.value = student.password;
+  confirmPasswordInput.value = student.password;
+
+  setSelectedGender(student.gender);
+  stateInput.value = student.state;
+  loadCitiesByState(student.state);
+  cityInput.value = student.city;
 }
 
 function renderStudentTable() {
@@ -475,47 +512,22 @@ function renderStudentTable() {
   studentRecords.forEach(function (student, index) {
     const row = document.createElement('tr');
 
-    const serialCell = createCell(String(index + 1));
-    serialCell.style.color = '#94a3b8';
-    serialCell.style.fontWeight = '600';
-    row.appendChild(serialCell);
+    row.appendChild(createStyledCell(String(index + 1), TABLE_CELL_STYLES.serial));
 
     row.appendChild(createNameCell(student));
 
-    const rollCell = createCell(String(student.rollNumber));
-    rollCell.style.fontFamily = 'monospace';
-    rollCell.style.fontWeight = '700';
-    row.appendChild(rollCell);
-
-    const emailCell = createCell(student.email);
-    emailCell.style.color = '#475569';
-    row.appendChild(emailCell);
-
-    const phoneCell = createCell(student.phone);
-    phoneCell.style.color = '#475569';
-    row.appendChild(phoneCell);
-
-    const dobCell = createCell(student.dob);
-    dobCell.style.color = '#64748b';
-    row.appendChild(dobCell);
+    row.appendChild(createStyledCell(String(student.rollNumber), TABLE_CELL_STYLES.rollNumber));
+    row.appendChild(createStyledCell(student.email, TABLE_CELL_STYLES.muted));
+    row.appendChild(createStyledCell(student.phone, TABLE_CELL_STYLES.muted));
+    row.appendChild(createStyledCell(student.dob, TABLE_CELL_STYLES.subtle));
 
     row.appendChild(createGenderCell(student.gender));
     row.appendChild(createLocationCell(student.city, student.state));
     row.appendChild(createCourseCell(student.course));
 
-    const semesterCell = createCell('Sem ' + student.semester);
-    semesterCell.style.color = '#64748b';
-    row.appendChild(semesterCell);
-
-    const cgpaCell = createCell(String(student.cgpa));
-    cgpaCell.className = 'cgpa-val';
-    row.appendChild(cgpaCell);
-
-    const addressCell = createCell(student.address);
-    addressCell.style.maxWidth = '160px';
-    addressCell.style.whiteSpace = 'normal';
-    addressCell.style.color = '#64748b';
-    row.appendChild(addressCell);
+    row.appendChild(createStyledCell('Sem ' + student.semester, TABLE_CELL_STYLES.subtle));
+    row.appendChild(createStyledCell(String(student.cgpa), null, 'cgpa-val'));
+    row.appendChild(createStyledCell(student.address, TABLE_CELL_STYLES.address));
 
     row.appendChild(createActionCell(index));
 
@@ -717,22 +729,7 @@ tableBody.addEventListener('click', function (event) {
     editingRecordIndex = recordIndex;
     submitButtonText.textContent = 'Update Registration';
     clearAllErrors();
-
-    fullNameInput.value = student.fullName;
-    dobInput.value = student.dob;
-    phoneInput.value = student.phone;
-    emailInput.value = student.email;
-    setSelectedGender(student.gender);
-    stateInput.value = student.state;
-    loadCitiesByState(student.state);
-    cityInput.value = student.city;
-    addressInput.value = student.address;
-    rollNumberInput.value = String(student.rollNumber);
-    cgpaInput.value = String(student.cgpa);
-    courseInput.value = student.course;
-    semesterInput.value = String(student.semester);
-    passwordInput.value = student.password;
-    confirmPasswordInput.value = student.password;
+    populateFormForEditing(student);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
