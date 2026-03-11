@@ -142,8 +142,13 @@ Thanks to the frontend developer community for inspiration around accessible for
 
 ## Screenshots
 
-![Student Registration Form UI](assets/images/screenshots/form-ui.jpg)
-![Student Records Table UI](assets/images/screenshots/records-ui.png)
+**Desktop View**
+
+<img src="assets/images/screenshots/form-ui.jpg" alt="Student Registration Form UI - desktop view" width="760" />
+
+**Reduced Screen View**
+
+<img src="assets/images/screenshots/records-ui.png" alt="Student Records Table UI - reduced screen view" width="320" />
 
 ---
 
