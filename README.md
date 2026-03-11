@@ -142,10 +142,8 @@ Thanks to the frontend developer community for inspiration around accessible for
 
 ## Screenshots
 
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-  <img width="380" src="https://snipboard.io/vQIUc0.jpg" alt="Student Registration Form UI" />
-  <img width="380" src="https://snipboard.io/kyrRSt.jpg" alt="Student Records Table UI" />
-</div>
+![Student Registration Form UI](assets/images/screenshots/form-ui.jpg)
+![Student Records Table UI](assets/images/screenshots/records-ui.png)
 
 ---
 
